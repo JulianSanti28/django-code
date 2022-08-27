@@ -1,0 +1,14 @@
+{% extends 'layout.html'%}
+{% block body%}
+
+<div class="container text-center">
+    <form method="post">
+        {%csrf_token%}
+        <div class="mb-3">
+           <li> {{form}}</li>             
+        </div>      
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </form>
+</div>
+{% endblock %}
+ 

@@ -1,0 +1,29 @@
+image: python:3.10
+clone:
+  depth: full
+services:
+    docker:
+      type: docker
+      memory: 16384
+
+steps:
+ - step: &build-test-sonarcloud
+     name: Build and analyze on SonarCloud
+     services: [docker]
+     script:
+       - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+       - pip install pytest
+      # - pytest -v tests/* --junitxml=test-reports/report.xml
+       # Enforce style consistency across Python projects https://flake8.pycqa.org/en/latest/manpage.html
+    
+       
+       - pipe: sonarsource/sonarcloud-scan:1.4.0
+         variables:
+            SONAR_TOKEN: $SONAR_TOKEN
+            SONAR_SCANNER_OPTS: -Xmx16384m
+            DEBUG: "true"
+            EXTRA_ARGS: '-Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN' 
+pipelines:
+  branches:
+    Develop:
+     - step: *build-test-sonarcloud
